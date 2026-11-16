@@ -6,16 +6,12 @@ const app = express();
 const PORTA = 3000;
 
 app.use(express.json());
-
+const path = require("path");
+app.use(express.static(path.join(__dirname, "public")));
 function validarCNPJ(cnpj) {
   return typeof cnpj === "string" && /^\d{14}$/.test(cnpj);
 }
 
-app.get("/", (req, res) => {
-  res.json({
-    mensagem: "API do Mercadinho funcionando!"
-  });
-});
 
 
 app.get("/fornecedores", async (req, res) => {
@@ -367,7 +363,52 @@ return res.status(200).json({
 });
 
 
+ // Rota para cadastrar novos fornecedores
+
+
+app.post("/fornecedores", async (req, res) => {
+  try {
+
+const { razao_social, cnpj, telefone, email } = req.body;
+
+if (
+  typeof razao_social !== "string" ||
+  !razao_social.trim() ||
+  !validarCNPJ(cnpj)
+) {
+  return res.status(400).json({
+    mensagem: "Razão social ou CNPJ inválido."
+  });
+}
+
+const sql = `
+  INSERT INTO fornecedor
+  (razao_social, cnpj, telefone, email)
+  VALUES (?, ?, ?, ?)
+`;
+
+const [resultado] = await db.query(sql, [
+  razao_social.trim(),
+  cnpj,
+  telefone,
+  email
+]);
+
+return res.status(201).json({
+  mensagem: "Fornecedor cadastrado com sucesso!",
+  id_fornecedor: resultado.insertId
+});
+
+  } catch (erro) {
+    console.error("Erro ao cadastrar fornecedor:", erro);
+    res.status(500).json({
+      mensagem: "Erro ao cadastrar fornecedor."
+    });
+  }
+});
+
+
+
 app.listen(PORTA, () => {
   console.log(`Servidor funcionando na porta ${PORTA}`);
 });
-

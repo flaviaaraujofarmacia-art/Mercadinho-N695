@@ -1,0 +1,305 @@
+
+* {
+  box-sizing: border-box;
+}
+
+
+body {
+  margin: 0;
+  font-family: 'Poppins', Arial, sans-serif;
+  background-color: #f1f5f9;
+  color: #243447;
+}
+
+
+header {
+  background-color: #163a4d;
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+
+header h1 {
+  margin: 0 0 10px;
+}
+
+header p {
+  margin: 0;
+}
+
+
+main {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(22, 58, 77, 0.08);
+  text-align: center;
+}
+
+
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+
+button {
+  background-color: #20744a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 25px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #155735;
+}
+
+
+/* Estrutura do painel administrativo */
+.painel {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 0 24px;
+}
+
+/* Menu lateral */
+.menu-lateral {
+  width: 240px;
+  flex-shrink: 0;
+  background-color: #163a4d;
+  color: white;
+  padding: 25px 18px;
+  border-radius: 18px;
+  min-height: 450px;
+}
+
+.menu-lateral h2 {
+  font-size: 20px;
+  margin: 0 0 25px;
+}
+
+/* Botões do menu */
+.menu-lateral nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-lateral button {
+  width: 100%;
+  background-color: #244e63;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 15px;
+}
+
+.menu-lateral button:hover {
+  background-color: #e8913a;
+}
+
+/* Área principal */
+.painel main {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+/* Adaptação para telas pequenas */
+@media (max-width: 700px) {
+  .painel {
+    flex-direction: column;
+    padding: 0 15px;
+  }
+
+  .menu-lateral {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .painel main {
+    width: 100%;
+  }
+}
+
+/* Área de resultados */
+#conteudo {
+  width: 100%;
+  margin-top: 25px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+/* Listas de produtos e fornecedores */
+#conteudo ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+#conteudo li {
+  background-color: #f1f5f9;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border-left: 4px solid #e8913a;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Tabela administrativa */
+#conteudo table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    min-width:0px;
+}
+
+#conteudo th {
+  background-color: #163a4d;
+  color: white;
+  padding: 14px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#conteudo td {
+  padding: 13px 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+#conteudo tbody tr:nth-child(even) {
+  background-color: #f1f5f9;
+}
+
+#conteudo tbody tr:hover {
+  background-color: #fff0df;
+}
+
+#conteudo th:first-child {
+  border-radius: 8px 0 0 0;
+}
+
+#conteudo th:last-child {
+  border-radius: 0 8px 0 0;
+}
+
+/* Formulário de cadastro de fornecedores */
+
+#formFornecedor {
+  max-width: 500px;
+  margin: 25px auto;
+  padding: 25px;
+  background-color: #f8fafc;
+  border: 1px solid #dce4ea;
+  border-radius: 12px;
+  text-align: left;
+}
+
+#formFornecedor label {
+  display: block;
+  margin: 15px 0 6px;
+  font-weight: 600;
+  color: #244347;
+}
+
+#formFornecedor input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccd6dd;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+#formFornecedor input:focus {
+  outline: none;
+  border-color: #163a4d;
+}
+
+#formFornecedor button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #163a4d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#formFornecedor button:hover {
+  background-color: #24566d;
+}
+
+/* Ajuste da tabela de fornecedores */
+
+#conteudo {
+  overflow-x: auto;
+}
+
+#conteudo td {
+  white-space: nowrap;
+}
+
+/* Formulário de cadastro de produtos */
+
+#formProduto {
+  max-width: 500px;
+  margin: 25px auto;
+}
+
+#formProduto label {
+  display: block;
+  margin: 15px 0 6px;
+  font-weight: 600;
+  color: #244347;
+}
+
+#formProduto input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccd6dd;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+#formProduto input:focus {
+  outline: none;
+  border-color: #163a4d;
+}
+
+#formProduto button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #163a4d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#formProduto button:hover {
+  background-color: #24566d;
+}
