@@ -180,7 +180,48 @@ botaoEditar.addEventListener("click", () => {
 });
 
 celulaAcoes.appendChild(botaoEditar);
+celulaAcoes.appendChild(botaoEditar);
+
+// Aqui vamos inserir o botão Excluir
+
+
 linha.appendChild(celulaAcoes);
+
+const botaoExcluirFornecedor = document.createElement("button");
+botaoExcluirFornecedor.textContent = "Excluir";
+botaoExcluirFornecedor.type = "button";
+
+botaoExcluirFornecedor.addEventListener("click", async () => {
+  const confirmar = confirm(
+    `Deseja realmente excluir o fornecedor "${fornecedor.razao_social}"?`
+  );
+
+  if (!confirmar) return;
+
+  try {
+    const resposta = await fetch(
+      `/fornecedores/${fornecedor.id_fornecedor}`,
+      { method: "DELETE" }
+    );
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(resultado.mensagem || "Erro ao excluir fornecedor.");
+      return;
+    }
+
+    alert(resultado.mensagem || "Fornecedor excluído com sucesso.");
+    btnFornecedores.click();
+  } catch (erro) {
+    alert("Erro ao excluir fornecedor: " + erro.message);
+  }
+});
+
+celulaAcoes.appendChild(botaoExcluirFornecedor);
+linha.appendChild(celulaAcoes);
+corpo.appendChild(linha);
+
  
 });
 
