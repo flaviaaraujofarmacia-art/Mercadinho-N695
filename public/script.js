@@ -169,17 +169,16 @@ fornecedores.forEach((fornecedor) => {
 
   
   const celulaAcoes = document.createElement("td");
-  corpo.appendChild(linha);
- 
-const botaoEditar = document.createElement("button");
-botaoEditar.textContent = "Editar";
-botaoEditar.type = "button";
 
-botaoEditar.addEventListener("click", () => {
+const botaoProdutos = criarBotao("Produtos", () => {
+  mostrarProdutosDoFornecedor(fornecedor.id_fornecedor);
+});
+
+const botaoEditar = criarBotao("Editar", () => {
   editarFornecedor(fornecedor);
 });
 
-celulaAcoes.appendChild(botaoEditar);
+celulaAcoes.appendChild(botaoProdutos);
 celulaAcoes.appendChild(botaoEditar);
 
 // Aqui vamos inserir o botão Excluir
@@ -364,7 +363,7 @@ document.addEventListener("submit", async (evento) => {
   }
 });
 
-function editarProduto(produto) {
+function editarProduto(produto, aoSalvar = () => btnProdutos.click()) {
   conteudo.innerHTML = `
     <h2>Editar Produto</h2>
 
@@ -383,7 +382,7 @@ function editarProduto(produto) {
 
       <label>Quantidade em estoque:</label>
       <input type="number" id="editarEstoque"
-       value="${produto.quantidade_estoque}"
+       value="${produto.quantidade_estoque}" min="0" step="1" required>
 
       <label>Código do fornecedor:</label>
       <input type="number" id="editarFornecedor"
@@ -425,17 +424,12 @@ function editarProduto(produto) {
       }
 
       alert("Produto atualizado com sucesso!");
-      btnProdutos.click();
+      aoSalvar();
 
     } catch (erro) {
       alert("Erro ao atualizar produto: " + erro.message);
     }
-
-
   });
-
-app.put
-  
 }
 
 
@@ -504,3 +498,156 @@ btnFornecedores.click();
 
 }
 
+
+// ---------- Tela: produtos de um fornecedor ----------
+
+function criarBotao(texto, aoClicar) {
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.textContent = texto;
+  botao.addEventListener("click", aoClicar);
+  return botao;
+}
+
+function formatarPreco(valor) {
+  return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+async function mostrarProdutosDoFornecedor(idFornecedor) {
+  conteudo.innerHTML = "<h2>Produtos do fornecedor</h2><p>Carregando...</p>";
+
+  try {
+    const resposta = await fetch(`/fornecedores/${idFornecedor}/produtos`);
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(resultado.mensagem || "Erro ao buscar produtos do fornecedor.");
+    }
+
+    desenharProdutosDoFornecedor(resultado.fornecedor, resultado.produtos);
+  } catch (erro) {
+    conteudo.textContent = "Não foi possível carregar os produtos: " + erro.message;
+  }
+}
+
+function desenharProdutosDoFornecedor(fornecedor, produtos) {
+  const voltarParaEstaTela = () => mostrarProdutosDoFornecedor(fornecedor.id_fornecedor);
+
+  conteudo.innerHTML = "";
+
+  const titulo = document.createElement("h2");
+  titulo.textContent = `Produtos de ${fornecedor.razao_social}`;
+
+  const detalhe = document.createElement("p");
+  detalhe.textContent = `CNPJ ${fornecedor.cnpj} — ${produtos.length} produto(s) cadastrado(s)`;
+
+  const barraAcoes = document.createElement("p");
+  barraAcoes.style.display = "flex";
+  barraAcoes.style.gap = "12px";
+  barraAcoes.appendChild(criarBotao("Cadastrar produto para este fornecedor", () => {
+    mostrarFormularioProdutoDoFornecedor(fornecedor);
+  }));
+  barraAcoes.appendChild(criarBotao("Voltar para fornecedores", () => btnFornecedores.click()));
+
+  conteudo.append(titulo, detalhe, barraAcoes);
+
+  if (produtos.length === 0) {
+    const aviso = document.createElement("p");
+    aviso.textContent = "Este fornecedor ainda não tem produtos cadastrados.";
+    conteudo.appendChild(aviso);
+    return;
+  }
+
+  const tabela = document.createElement("table");
+  tabela.innerHTML = `
+    <thead>
+      <tr>
+        <th>Código</th><th>Produto</th><th>Fabricante</th>
+        <th>Preço</th><th>Estoque</th><th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  const corpo = tabela.querySelector("tbody");
+
+  produtos.forEach((produto) => {
+    const linha = document.createElement("tr");
+    const valores = [
+      produto.codigo, produto.nome, produto.fabricante,
+      formatarPreco(produto.preco), produto.quantidade_estoque
+    ];
+
+    valores.forEach((valor) => {
+      const celula = document.createElement("td");
+      celula.textContent = valor ?? "";
+      linha.appendChild(celula);
+    });
+
+    const celulaAcoes = document.createElement("td");
+    celulaAcoes.appendChild(criarBotao("Editar", () => editarProduto(produto, voltarParaEstaTela)));
+    linha.appendChild(celulaAcoes);
+    corpo.appendChild(linha);
+  });
+
+  conteudo.appendChild(tabela);
+}
+
+function mostrarFormularioProdutoDoFornecedor(fornecedor) {
+  conteudo.innerHTML = `
+    <h2>Cadastrar produto</h2>
+    <p id="nomeFornecedorDoProduto"></p>
+
+    <form id="formProdutoDoFornecedor">
+      <label for="nomeNovoProduto">Nome do produto:</label>
+      <input type="text" id="nomeNovoProduto" required>
+
+      <label for="fabricanteNovoProduto">Fabricante:</label>
+      <input type="text" id="fabricanteNovoProduto" required>
+
+      <label for="precoNovoProduto">Preço (R$):</label>
+      <input type="number" id="precoNovoProduto" step="0.01" min="0" required>
+
+      <label for="estoqueNovoProduto">Quantidade em estoque:</label>
+      <input type="number" id="estoqueNovoProduto" min="0" step="1" required>
+
+      <button type="submit">Cadastrar produto</button>
+    </form>
+  `;
+
+  document.getElementById("nomeFornecedorDoProduto").textContent =
+    `Fornecedor: ${fornecedor.razao_social}`;
+
+  const voltar = criarBotao("Voltar", () => mostrarProdutosDoFornecedor(fornecedor.id_fornecedor));
+  conteudo.appendChild(voltar);
+
+  document.getElementById("formProdutoDoFornecedor").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+
+    const produto = {
+      nome: document.getElementById("nomeNovoProduto").value.trim(),
+      fabricante: document.getElementById("fabricanteNovoProduto").value.trim(),
+      preco: Number(document.getElementById("precoNovoProduto").value),
+      quantidade_estoque: Number(document.getElementById("estoqueNovoProduto").value),
+      id_fornecedor: fornecedor.id_fornecedor
+    };
+
+    try {
+      const resposta = await fetch("/produtos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(produto)
+      });
+      const resultado = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(resultado.mensagem || "Erro ao cadastrar produto.");
+      }
+
+      alert("Produto cadastrado com sucesso!");
+      mostrarProdutosDoFornecedor(fornecedor.id_fornecedor);
+    } catch (erro) {
+      alert("Erro ao cadastrar produto: " + erro.message);
+    }
+  });
+}

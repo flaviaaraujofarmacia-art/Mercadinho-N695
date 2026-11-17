@@ -30,6 +30,36 @@ app.get("/fornecedores", async (req, res) => {
 });
 
 
+app.get("/fornecedores/:id/produtos", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({ mensagem: "Código do fornecedor inválido." });
+    }
+
+    const [fornecedores] = await db.query(
+      "SELECT * FROM fornecedor WHERE id_fornecedor = ?",
+      [id]
+    );
+
+    if (fornecedores.length === 0) {
+      return res.status(404).json({ mensagem: "Fornecedor não encontrado." });
+    }
+
+    const [produtos] = await db.query(
+      "SELECT * FROM produto WHERE id_fornecedor = ? ORDER BY codigo",
+      [id]
+    );
+
+    res.json({ fornecedor: fornecedores[0], produtos });
+  } catch (erro) {
+    console.error("Erro ao buscar produtos do fornecedor:", erro);
+    res.status(500).json({ mensagem: "Erro ao consultar produtos do fornecedor." });
+  }
+});
+
+
 app.put("/fornecedores/:id", async (req, res) => {
   try {
 
