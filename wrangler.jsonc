@@ -1,0 +1,21 @@
+{
+  // Configuração do Worker no Cloudflare
+  "name": "mercadinho-n695",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-17",
+
+  // Telas do sistema (HTML, CSS e JS) que já estão na pasta public
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+
+  // Banco de dados D1 (substitui o MySQL)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mercadinho",
+      "database_id": "COLE_AQUI_O_DATABASE_ID_DO_D1"
+    }
+  ]
+}
